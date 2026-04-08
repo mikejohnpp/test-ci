@@ -1,0 +1,39 @@
+name: Detect Changes
+
+on:
+  workflow_call:
+    outputs:
+      modules:
+        description: "Changed modules"
+        value: ${{ jobs.detect.outputs.modules }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set.outputs.modules }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: set
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+          changed=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD)
+
+          modules=$(echo "$changed" \
+            | cut -d/ -f1 \
+            | sort -u \
+            | grep -vE "^(\.github|docker|\.mvn)$" \
+            | tr '\n' ' ')
+
+          # nếu common thay đổi → build all
+          if echo "$changed" | grep -q "^common/"; then
+            modules="maui-backend service-templete"
+          fi
+
+          echo "modules=$modules"
+          echo "modules=$modules" >> $GITHUB_OUTPUT

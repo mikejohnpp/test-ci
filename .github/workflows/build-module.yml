@@ -1,0 +1,22 @@
+name: Build Module
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker
+        run: |
+          docker build \
+            -f docker/${{ inputs.module }}.Dockerfile \
+            -t myrepo/${{ inputs.module }}:${{ github.sha }} \
+            .

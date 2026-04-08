@@ -1,0 +1,22 @@
+name: Main Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect:
+    uses: ./.github/workflows/detect-changes.yml
+
+  build:
+    needs: detect
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: ${{ fromJson(format('["{0}"]', join('","', needs.detect.outputs.modules))) }}
+
+    steps:
+      - name: Call build workflow
+        uses: ./.github/workflows/build-module.yml
+        with:
+          module: ${{ matrix.module }}

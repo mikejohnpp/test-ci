@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: demo
+  datasource:
+    url: jdbc:mysql://192.168.1.186:3306/maui_noithat?zeroDateTimeBehavior=convertToNull
+    username: root
+    password: "@abc123456"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+  mvc:
+    pathmatch:
+      use-suffix-pattern: false
+      matching-strategy: ant_path_matcher
+    contentnegotiation:
+      favor-path-extension: false
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: daoduynhat2004@gmail.com
+    password: "ebbv cpcz icua xmgf"
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+secret:
+  jwt: z8Vj2Q9yHsW4tK7rB1mN5cX8aL3pD6uE0qF9gR2oT7sY4vH1kM8nJ5bC2wX7z9A1dL6mF3pQ0rT8
+
+logging:
+  level:
+    org.springframework.mail: DEBUG
+    org.springframework.web: DEBUG
+    com.example.demo: DEBUG
