@@ -55,6 +55,7 @@
 
     <modules>
         <module>maui-backend</module>
+        <module>service-templete</module>
         <module>common</module>
     </modules>
 
