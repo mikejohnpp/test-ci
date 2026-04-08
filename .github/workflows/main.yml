@@ -14,7 +14,7 @@ jobs:
     needs: detect
     strategy:
       matrix:
-        module: [ "maui-backend", "service-templete" ]
+        module: ${{ fromJson(needs.detect.outputs.modules) }}
 
     uses: ./.github/workflows/build-module.yml
     with:

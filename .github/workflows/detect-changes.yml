@@ -37,5 +37,7 @@ jobs:
             modules="maui-backend service-templete"
           fi
 
-          echo "modules=$modules"
-          echo "modules=$modules" >> $GITHUB_OUTPUT
+          modules_json=$(echo "$modules" | jq -R -s -c 'split(" ")[:-1]')
+  
+          echo "modules=$modules_json"
+          echo "modules=$modules_json" >> $GITHUB_OUTPUT
