@@ -12,13 +12,10 @@ jobs:
 
   build:
     needs: detect
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: ${{ fromJson(format('["{0}"]', join('","', needs.detect.outputs.modules))) }}
+        module: [ "maui-backend", "service-templete" ]
 
-    steps:
-      - name: Call build workflow
-        uses: ./.github/workflows/build-module.yml
-        with:
-          module: ${{ matrix.module }}
+    uses: ./.github/workflows/build-module.yml
+    with:
+      module: ${{ matrix.module }}
