@@ -6,6 +6,7 @@ WORKDIR /build
 COPY pom.xml pom.xml
 COPY common/pom.xml common/pom.xml
 COPY maui-backend/pom.xml maui-backend/pom.xml
+COPY service-templete/pom.xml service-templete/pom.xml
 
 # Install parent POM to local repository
 RUN mvn -q -ntp -B -N install
