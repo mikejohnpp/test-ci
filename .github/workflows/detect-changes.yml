@@ -23,13 +23,15 @@ jobs:
           git fetch origin ${{ github.event.pull_request.base.ref }}
 
           changed=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD)
+          
+          MODULES=$(tr '\n' '|' < modules.txt)
 
           modules=$(echo "$changed" \
-            | cut -d/ -f1 \
-            | sort -u \
-            | grep -vE "^(\.github|docker|\.mvn)$" \
-            | tr '\n' ' ')
-
+              | cut -d/ -f1 \
+              | sort -u \
+              | grep -E "^(maui-backend|service-templete)$" \
+              | tr '\n' ' ')
+          
           # nếu common thay đổi → build all
           if echo "$changed" | grep -q "^common/"; then
             modules="maui-backend service-templete"
