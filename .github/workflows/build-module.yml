@@ -17,6 +17,6 @@ jobs:
       - name: Build Docker
         run: |
           docker build \
-            -f docker/${{ inputs.module }}.Dockerfile \
+            -f docker/${{ inputs.module }}.dockerfile \
             -t myrepo/${{ inputs.module }}:${{ github.sha }} \
             .
