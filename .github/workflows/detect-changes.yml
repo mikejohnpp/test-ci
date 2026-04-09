@@ -24,17 +24,21 @@ jobs:
 
           changed=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD)
           
-          MODULES=$(tr '\n' '|' < modules.txt)
+          MODULES=$(sed 's/ *$//' modules.txt | grep -v '^$' | paste -sd '|')
+          MODULES_LIST=$(grep -v '^$' modules.txt | tr '\n' ' ')
 
           modules=$(echo "$changed" \
               | cut -d/ -f1 \
               | sort -u \
-              | grep -E "^(maui-backend|service-templete)$" \
+              | grep -E "^($MODULES)$" \
               | tr '\n' ' ')
           
-          # nếu common thay đổi → build all
+          echo "MODULES_REGEX=$MODULES_REGEX"
+          echo "MODULES_LIST=$MODULES_LIST"
+          echo "modules=$modules"
+          
           if echo "$changed" | grep -q "^common/"; then
-            modules="maui-backend service-templete"
+            modules="$MODULES_LIST"
           fi
 
           modules_json=$(echo "$modules" | jq -R -s -c 'split(" ")[:-1]')
