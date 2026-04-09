@@ -1,12 +1,23 @@
 FROM maven:3.9.14-eclipse-temurin-21-alpine AS builder
 
+ARG MODULE
+
 WORKDIR /build
 
 # Copy the dependency specifications
 COPY pom.xml pom.xml
 COPY common/pom.xml common/pom.xml
-COPY maui-backend/pom.xml maui-backend/pom.xml
-COPY service-templete/pom.xml service-templete/pom.xml
+COPY ${MODULE}/pom.xml ${MODULE}/pom.xml
+
+# Fix parent pom.xml to build exactly what module need
+RUN sed -i '/<modules>/,/<\/modules>/c\
+<modules>\n\
+  <module>common</module>\n\
+  <module>'"$MODULE"'</module>\n\
+</modules>' pom.xml
+
+# Debug pom.xml
+#RUN cat pom.xml
 
 # Install parent POM to local repository
 RUN mvn -q -ntp -B -N install
@@ -23,31 +34,21 @@ COPY common common
 RUN mvn -q -B -pl common install
 
 # Resolve dependencies for the main application
-RUN mvn -q -ntp -B -pl maui-backend -am dependency:go-offline
+RUN mvn -q -ntp -B -pl ${MODULE} -am dependency:go-offline
 # Copy sources for main application
-COPY maui-backend maui-backend
+COPY ${MODULE} ${MODULE}
 
-# RUN mvn -q -ntp -B -pl maui-backend clean package -DskipTests
+# RUN mvn -q -ntp -B -pl ${MODULE} clean package -DskipTests
 # Package the common and application modules together
-RUN mvn -q -ntp -B -pl common,maui-backend package -DskipTests
-
-RUN mkdir -p /jar-layers
-WORKDIR /jar-layers
-# Extract JAR layers
-RUN java -Djarmode=layertools -jar /build/maui-backend/target/*.jar extract
+RUN mvn -q -ntp -B -pl common,${MODULE} package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 
 RUN mkdir -p /app
+
+ARG MODULE
+
 WORKDIR /app
 
-# Copy JAR layers, layers that change more often should go at the end
-#COPY --from=builder /jar-layers/dependencies/ ./
-#COPY --from=builder /jar-layers/spring-boot-loader/ ./
-#COPY --from=builder /jar-layers/snapshot-dependencies/ ./
-#COPY --from=builder /jar-layers/application/ ./
-
-COPY --from=builder /build/maui-backend/target/*.jar app.jar
+COPY --from=builder /build/${MODULE}/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-#ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
