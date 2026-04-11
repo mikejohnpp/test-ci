@@ -2,7 +2,7 @@
 FROM ghcr.io/graalvm/graalvm-community:21 AS native-build
 
 WORKDIR /app
-COPY pom.xml .
+COPY service-templete/pom.xml .
 COPY common/pom.xml common/pom.xml
 COPY maui-backend/pom.xml maui-backend/pom.xml
 COPY .mvn/ .mvn/

@@ -4,7 +4,7 @@
 
 - `maui-backend` - Main Spring Boot application
 - `common` - Shared entities in `org.social.entity` package
-- `service-templete` - Template/demo module (not in parent POM)
+- `service-templete` - Template/demo module
 
 ## Build & Run
 
@@ -49,25 +49,18 @@
 
 ## Docker
 
-- **Build**: `docker build -t maui-backend:local -f docker/maui-backend.dockerfile .`
-- **Run**: `docker run -p 8080:8080 maui-backend:local`
-- **Native build**: `docker build -t maui-backend:native -f docker/maui-backend-graal.dockerfile .` (requires GraalVM)
+Dockerfiles nằm trong thư mục riêng theo module:
 
-Dockerfile uses multi-stage Alpine build:
+- **maui-backend**: `docker/maui-backend/maui-backend.dockerfile`
+- **service-templete**: `docker/service-templete/service-templete.dockerfile`
+- **native**: `docker/maui-backend-graal.dockerfile`
+
+Dockerfiles dùng multi-stage Alpine build:
 - Builder: `maven:3.9-eclipse-temurin-21-alpine`
 - Runtime: `eclipse-temurin:21-jre-alpine` (~80-120MB)
 
-## CI Build (Multi-module)
+## CI
 
-```bash
-# Build all modules
-mvn -pl common,maui-backend package
-
-# Build single module
-mvn -pl maui-backend package
-
-# Build module + parent dependencies
-mvn -pl maui-backend -am package
-```
-
-CI runs on ubuntu-latest, builds Docker image and pushes to ghcr.io, then updates FinalGraduateProjectConfig repo.
+- Dùng reusable workflows: `detect-changes.yml` → `build-module.yml`
+- Build từng module độc lập khi có thay đổi
+- Push image lên ghcr.io với tag `latest` và commit SHA

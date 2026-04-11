@@ -23,7 +23,6 @@
         <java.version>21</java.version>
         <mysql.version>9.0.0</mysql.version>
         <jjwt.version>0.11.5</jjwt.version>
-        <native.maven.plugin.version>0.11.4</native.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +54,7 @@
 
     <modules>
         <module>maui-backend</module>
+        <module>service-templete</module>
         <module>common</module>
     </modules>
 
